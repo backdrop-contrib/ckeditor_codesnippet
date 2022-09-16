@@ -69,5 +69,4 @@ function ckeditor_codesnippet_ckeditor_settings_alter(array &$settings, $format)
     array_unshift($settings['contentsCss'], $library_location . '/prism.css');
     $settings['extraPlugins'] .= ',prismHighlighter';
   }
-  dsm($settings);
 }
