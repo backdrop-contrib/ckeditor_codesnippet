@@ -1,0 +1,16 @@
+{
+    "_config_name": "ckeditor_codesnippet.settings",
+    "_config_static": true,
+    "code_class": null,
+    "theme": null,
+    "languages": {
+        "css": "CSS",
+        "bash": "Bash",
+        "diff": "Diff",
+        "html": "HTML",
+        "javascript": "JavaScript",
+        "json": "JSON",
+        "markdown": "Markdown",
+        "php": "PHP"
+    }
+}

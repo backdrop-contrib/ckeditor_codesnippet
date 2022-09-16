@@ -1,0 +1,10 @@
+type = module
+name = CKEditor Code Snippet
+description = Allows easy inserting of syntax-highlighted code blocks in CKEditor.
+backdrop = 1.x
+
+package = User Interface
+tags[] = Administration
+tags[] = Content
+tags[] = Editors
+tags[] = User Interface

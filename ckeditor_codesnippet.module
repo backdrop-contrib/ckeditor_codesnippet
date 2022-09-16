@@ -1,0 +1,73 @@
+<?php
+/**
+ * @file
+ * Provides integration with the CKEditor Code Snippet plugin.
+ */
+
+/**
+ * Implements hook_ckeditor_plugins().
+ */
+function ckeditor_codesnippet_ckeditor_plugins() {
+  $library_path = backdrop_get_path('module', 'ckeditor_codesnippet') .  '/libraries/codesnippet';
+  $plugins['codesnippet'] = array(
+    'path' => $library_path,
+    'file' => 'plugin.js',
+    'buttons' => array(
+      'CodeSnippet' => array(
+        'label' => t('Code Snippet'),
+        'image' => $library_path . '/icons/codesnippet.png',
+        'required_html' => array(
+          'tags' => array('pre', 'code'),
+          'attributes' => array('class'),
+          'classes' => array('language-*'),
+        ),
+        'dependencies' => array('widget', 'dialog'),
+      ),
+    ),
+  );
+
+  return $plugins;
+}
+
+/**
+ * Implements hook_ckeditor_settings_alter().
+ */
+function ckeditor_codesnippet_ckeditor_settings_alter(array &$settings, $format) {
+  // Set configuration options.
+  $config = config('ckeditor_codesnippet.settings');
+  $setting_names = array(
+    'theme' => 'codeSnippet_theme',
+    'languages' => 'codeSnippet_languages',
+    'code_class' => 'codeSnippet_codeClass',
+  );
+  foreach ($setting_names as $config_name => $ckeditor_name) {
+    $setting = $config->get($config_name);
+    // Do not set a value unless it contains a value.
+    if (!empty($setting)) {
+      $settings[$ckeditor_name] = $setting;
+    }
+  }
+
+  // Use PrismJS highlighter if present.
+  if (function_exists('prism_return_library_location')) {
+    $library_location = base_path() . trim(prism_return_library_location(), './');
+    // Override the default class name which is "hljs".
+    if (!isset($settings['codeSnippet_codeClass'])) {
+      $settings['codeSnippet_codeClass'] = 'ck-prism';
+    }
+
+    $settings['backdrop']['codeSnippet']['prism'] = array(
+      'js' => array($library_location . '/prism.js'),
+      'css' => array(),
+    );
+    $settings['backdrop']['externalPlugins']['prismHighlighter'] = array(
+      'file' => 'ckeditor-codesnippet-prism.js',
+      'path' => backdrop_get_path('module', 'ckeditor_codesnippet') . '/js',
+    );
+
+    // Add Prism CSS file to the beginning of the CSS list so theme CSS wins.
+    array_unshift($settings['contentsCss'], $library_location . '/prism.css');
+    $settings['extraPlugins'] .= ',prismHighlighter';
+  }
+  dsm($settings);
+}
