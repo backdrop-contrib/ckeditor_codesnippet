@@ -13,10 +13,19 @@ CKEDITOR.plugins.add('prismHighlighter', {
         editor.config.backdrop.codeSnippet.prism.css.forEach(function(filePath) {
           editor.addContentsCss(filePath);
         });
-        // Load Prism JS files.
-        CKEDITOR.scriptLoader.load(editor.config.backdrop.codeSnippet.prism.js, function() {
+        // Load Prism JS files in a queue, calling the CKEditor ready() callback
+        // when the last script is loaded.
+        var readyCallback = function() {
           that.Prism = window.Prism;
           ready();
+        };
+        editor.config.backdrop.codeSnippet.prism.js.forEach(function(filePath, index, array) {
+          if (index === array.length - 1) {
+            CKEDITOR.scriptLoader.queue(filePath, readyCallback);
+          }
+          else {
+            CKEDITOR.scriptLoader.queue(filePath);
+          }
         });
       },
       highlighter: function(code, language, callback) {
